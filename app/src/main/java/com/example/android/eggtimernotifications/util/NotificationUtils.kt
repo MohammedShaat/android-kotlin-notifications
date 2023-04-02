@@ -39,12 +39,11 @@ private val FLAGS = 0
 fun NotificationManager.sendNotification(messageBody: String, applicationContext: Context ) {
     // Create the content intent for the notification, which launches
     // this activity
-    val intent = Intent(applicationContext, MainActivity::class.java)
-
-    val pendingIntent = PendingIntent.getActivity(
+    val mainActivityIntent = Intent(applicationContext, MainActivity::class.java)
+    val mainActivityPendingIntent = PendingIntent.getActivity(
         applicationContext,
         NOTIFICATION_ID,
-        intent,
+        mainActivityIntent,
         PendingIntent.FLAG_UPDATE_CURRENT
     )
 
@@ -56,7 +55,14 @@ fun NotificationManager.sendNotification(messageBody: String, applicationContext
         .bigPicture(img)
         .bigLargeIcon(null)
 
-    // TODO: Step 2.2 add snooze action
+    val snoozeIntent = Intent(applicationContext, SnoozeReceiver::class.java)
+    val snoozePendingIntent = PendingIntent.getBroadcast(
+        applicationContext,
+        REQUEST_CODE,
+        snoozeIntent,
+        PendingIntent.FLAG_ONE_SHOT
+    )
+    
 
     val notificationBuilder = NotificationCompat.Builder(
         applicationContext,
@@ -69,13 +75,18 @@ fun NotificationManager.sendNotification(messageBody: String, applicationContext
         .setContentTitle(applicationContext.getString(R.string.notification_title))
         .setContentText(messageBody)
 
-        .setContentIntent(pendingIntent)
+        .setContentIntent(mainActivityPendingIntent)
         .setAutoCancel(true)
 
         .setStyle(bigPicStyle)
         .setLargeIcon(img)
 
         // TODO: Step 2.3 add snooze action
+        .addAction(
+            R.drawable.egg_icon,
+            applicationContext.getString(R.string.snooze),
+            snoozePendingIntent
+        )
 
         // TODO: Step 2.5 set priority
 
