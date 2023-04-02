@@ -17,7 +17,16 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             Log.i("onMessageReceived", "$it")
         }
 
+        remoteMessage?.notification?.let {
+            sendNotification(it.body!!)
+        }
     }
 
-
+    private fun sendNotification(messageBody: String) {
+        val notificationManager = ContextCompat.getSystemService(
+            applicationContext,
+            NotificationManager::class.java
+        ) as NotificationManager
+        notificationManager.sendNotification(messageBody, applicationContext)
+    }
 }
